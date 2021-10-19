@@ -40,7 +40,42 @@ from pyspark.sql import window as w
 
 # COMMAND ----------
 
-import 
+if 'config' not in locals():
+  config = {}
+config['storage_account_name'] = 'posanalysis'
+config['storage_container_name'] = 'instacart'
+config['storage_account_access_key'] = '1KoGkMGScnFqeqoJJDQ9HgUBcLHel798LtR6e3yy/xDugn8Jdkme0WCGiI5n6+vqfYsDE7Wea5qqVOInlkVInw=='
+config['storage_connection_string'] = 'DefaultEndpointsProtocol=https;AccountName=posanalysis;AccountKey=1KoGkMGScnFqeqoJJDQ9HgUBcLHel798LtR6e3yy/xDugn8Jdkme0WCGiI5n6+vqfYsDE7Wea5qqVOInlkVInw==;EndpointSuffix=core.windows.net'
+
+# COMMAND ----------
+
+config['dbfs_mount_name'] = '/mnt/instacart'
+conf_key_name = "fs.azure.account.key.{0}.blob.core.windows.net".format(config['storage_account_name'])
+conf_key_value = config['storage_account_access_key']
+
+# determine if not already mounted
+for m in dbutils.fs.mounts():
+  mount_exists = (m.mountPoint==config['dbfs_mount_name'])
+  if mount_exists: break
+
+# create mount if not exists
+if not mount_exists:
+  
+  print('creating mount point {0}'.format(config['dbfs_mount_name']))
+  
+  # create mount
+  dbutils.fs.mount(
+    source = "wasbs://{0}@{1}.blob.core.windows.net".format(
+      config['storage_container_name'], 
+      config['storage_account_name']
+      ),
+    mount_point = config['dbfs_mount_name'],
+    extra_configs = {conf_key_name:conf_key_value}
+    )
+
+# COMMAND ----------
+
+!ls /dbfs/mnt/instacart/bronze/order_products/
 
 # COMMAND ----------
 
