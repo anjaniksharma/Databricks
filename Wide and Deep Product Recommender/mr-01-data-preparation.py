@@ -90,7 +90,22 @@ _ = spark.sql('CREATE DATABASE IF NOT EXISTS instacart')
 
 # COMMAND ----------
 
-# DBTITLE 1,Orders
+# MAGIC %sh
+# MAGIC for file in `find /dbfs/mnt/instacart -name "*.zip" -type f`
+# MAGIC do
+# MAGIC filename=`basename $file`
+# MAGIC mv $file  /tmp/$filename
+# MAGIC unzip /tmp/$filename
+# MAGIC target_dir=`dirname $file`
+# MAGIC target_file=`basename -s '.zip' $file`
+# MAGIC rm -f $file
+# MAGIC 
+# MAGIC mv /tmp/$target_file  $target_dir/$target_file
+# MAGIC done
+
+# COMMAND ----------
+
+# DBTITLE 1,Load Orders
 # delete the old table if needed
 _ = spark.sql('DROP TABLE IF EXISTS instacart.orders')
 
@@ -112,9 +127,19 @@ orders = (
     .csv(
       '/mnt/instacart/bronze/orders',
       header=True,
-      schema=orders_schema
+      schema=orders_schema,
+      
       )
   )
+
+# COMMAND ----------
+
+orders.head(10)
+
+# COMMAND ----------
+
+# DBTITLE 1,Orders
+
 
 # calculate days until final purchase 
 win = (
