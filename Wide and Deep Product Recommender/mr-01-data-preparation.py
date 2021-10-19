@@ -40,6 +40,10 @@ from pyspark.sql import window as w
 
 # COMMAND ----------
 
+import 
+
+# COMMAND ----------
+
 # DBTITLE 1,Create Database
 _ = spark.sql('CREATE DATABASE IF NOT EXISTS instacart')
 
