@@ -105,6 +105,14 @@ _ = spark.sql('CREATE DATABASE IF NOT EXISTS instacart')
 
 # COMMAND ----------
 
+# MAGIC %sh
+# MAGIC 
+# MAGIC 
+# MAGIC mv /tmp/aisles.csv.zip  ~/.
+# MAGIC unzip ~/aisles.csv.zip
+
+# COMMAND ----------
+
 # DBTITLE 1,Load Orders
 # delete the old table if needed
 _ = spark.sql('DROP TABLE IF EXISTS instacart.orders')
@@ -134,7 +142,7 @@ orders = (
 
 # COMMAND ----------
 
-orders.head(10)
+display(orders)
 
 # COMMAND ----------
 
@@ -177,6 +185,10 @@ display(
     .table('instacart.orders')
     .orderBy('user_id','order_number')
   )
+
+# COMMAND ----------
+
+display(spark.table("instacart.orders").where("user_id == 1"))
 
 # COMMAND ----------
 
